@@ -1,0 +1,25 @@
+<% if @user.error.present? %>
+    <div style="color: red">
+    <h2>Errors prohibited this user from being saved:</h2>
+
+    <ul>
+      <li><%= @user.error.full_message %></li>
+    </ul>
+  </div>
+<% end %>
+<%= form_for :session, url: sessions_create_path do |f| %>
+  <%= f.label :name %>
+  <%= f.text_field :name %>
+
+  <%= f.label :email %>
+  <%= f.text_field :email %>
+
+  <%= f.label :password %>
+  <%= f.password_field :password %>
+
+  <%= f.label :password_confirmation %>
+  <%= f.password_field :password_confirmation %>
+
+  <%= f.submit 'Create' %>
+<% end %>
+
