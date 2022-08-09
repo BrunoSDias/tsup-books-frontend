@@ -1,4 +1,4 @@
-<div id="<%= dom_id book %>">
+<div id="<%= book.id %>">
   <p>
     <strong>Title:</strong>
     <%= book.title %>
@@ -14,4 +14,6 @@
     <%= book.user_id %>
   </p>
 
+  <%= link_to "Edit this book", edit_book_path(book.id) %> |
+  <%= button_to "Destroy this book", book_path(book.id), method: :delete %>
 </div>

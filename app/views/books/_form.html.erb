@@ -1,25 +1,29 @@
-<%= form_for :books do |form| %>
-  <% if book.error.present? %>
-    <div style="color: red">
-      <h2>Errors prohibited this book from being saved:</h2>
+  <form
+    action="<%= book.id ? "/books/#{book.id}".html_safe : "/books".html_safe %>"
+    method="<%= book.id ? "PATCH" : "POST" %>"
+  >
+    <%= hidden_field_tag :authenticity_token, form_authenticity_token -%>
+    <% if book.error.present? %>
+      <div style="color: red">
+        <h2>Errors prohibited this book from being saved:</h2>
 
-      <ul>
-        <li><%= book.error.full_message %></li>
-      </ul>
+        <ul>
+          <li><%= book.error.full_message %></li>
+        </ul>
+      </div>
+    <% end %>
+
+    <div>
+      <%= label_tag "books[title]", "Title" %>
+      <%= text_field_tag "books[title]", book.title %>
     </div>
-  <% end %>
 
-  <div>
-    <%= form.label :title, style: "display: block" %>
-    <%= form.text_field :title %>
-  </div>
+    <div>
+      <%= label_tag "books[summary]", "Summary" %>
+      <%= text_field_tag "books[summary]", book.summary %>
+    </div>
 
-  <div>
-    <%= form.label :summary, style: "display: block" %>
-    <%= form.text_field :summary %>
-  </div>
-
-  <div>
-    <%= form.submit %>
-  </div>
-<% end %>
+    <div>
+      <%= submit_tag %>
+    </div>
+</form>

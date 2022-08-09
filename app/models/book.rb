@@ -25,6 +25,18 @@ class Book
     books
   end
 
+  def self.find(auth_token:, book_id:)
+    payload = Http.call(endpoint: "/api/v1/books/#{book_id}", parameters: {}, headers: {Authorization: auth_token}, method: "get")
+    body = payload.parsed_response
+
+    if body.is_a?(Hash) && body["errors"]
+      self.error = body
+      return false
+    end
+
+    Book.new(body)
+  end
+
   def save
     payload = Http.call(endpoint: '/api/v1/books', parameters: books_params, headers: book_headers, method: "post")
     body = payload.parsed_response
@@ -36,21 +48,22 @@ class Book
     fill_attributes(payload)
   end
 
-  def update
-    payload = Http.call(endpoint: "/api/v1/books/#{id}", parameters: books_params, headers: book_headers, method: "patch")
+  def update(updated_params)
+    payload = Http.call(endpoint: "/api/v1/books/#{id}", parameters: {book: updated_params}, headers: book_headers, method: "patch")
     body = payload.parsed_response
     if body["errors"]
       self.error = body
       return false
     end
 
-    fill_attributes(payload)
+    fill_attributes(updated_params.merge(id: id))
   end
 
   def destroy
     payload = Http.call(endpoint: "/api/v1/books/#{id}", parameters: books_params, headers: book_headers, method: "delete")
     body = payload.parsed_response
-    if body["errors"]
+
+    if body
       self.error = body
       return false
     end
@@ -79,8 +92,9 @@ class Book
   def books_params
     {
       book: {
-        title: email,
-        summary: password
+        title: title,
+        summary: summary,
+        user_id: user_id
       }
     }
   end

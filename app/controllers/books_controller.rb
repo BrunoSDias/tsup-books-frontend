@@ -25,49 +25,37 @@ class BooksController < ApplicationController
     @book = Book.new(book_params)
     @book.auth_token = cookies[:user_auth]
 
-    respond_to do |format|
-      if @book.save
-        format.html { redirect_to books_url, notice: "Book was successfully created." }
-        format.json { render :show, status: :created }
-      else
-        format.html { render :new, status: :unprocessable_entity }
-        format.json { render json: @book.errors, status: :unprocessable_entity }
-      end
+    if @book.save
+      redirect_to books_url, notice: "Book was successfully created." 
+    else
+      render :new, status: :unprocessable_entity
     end
   end
 
   # PATCH/PUT /books/1 or /books/1.json
   def update
-    respond_to do |format|
-      if @book.update(book_params)
-        format.html { redirect_to books_url, notice: "Book was successfully updated." }
-        format.json { render :show, status: :ok }
-      else
-        format.html { render :edit, status: :unprocessable_entity }
-        format.json { render json: @book.errors, status: :unprocessable_entity }
-      end
+    if @book.update(book_params)
+      redirect_to books_url, notice: "Book was successfully updated."
+    else
+      render :edit, status: :unprocessable_entity
     end
   end
 
   # DELETE /books/1 or /books/1.json
   def destroy
     @book.destroy
-
-    respond_to do |format|
-      format.html { redirect_to books_url, notice: "Book was successfully destroyed." }
-      format.json { head :no_content }
-    end
+    redirect_to books_url, notice: "Book was successfully destroyed."
   end
 
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_book
-      @book = Book.find(params[:id])
+      @book = Book.find(auth_token: cookies[:user_auth], book_id: params[:id])
       @book.auth_token = cookies[:user_auth]
     end
 
     # Only allow a list of trusted parameters through.
     def book_params
-      params.require(:books).permit(:title, :summary, :user_id)
+      params.require(:books).permit(:title, :summary, :user_id).to_unsafe_h
     end
 end
