@@ -1,6 +1,6 @@
 class Http
   include HTTParty
-  BASE_URI = "http://localhost:3000".freeze
+  BASE_URI = Rails.env.production? ? "https://tsup-book-api.herokuapp.com/".freeze : "http://localhost:3000".freeze
 
   attr_accessor :endpoint, :parameters, :headers, :method
 
